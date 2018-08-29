@@ -68,7 +68,6 @@ function whatItSays() {
         var commandArr = data.split(",");
         randomCommand = commandArr[0];
         randomQuery = commandArr[1];
-        console.log(randomCommand, randomQuery)
         executeCommand(randomCommand, randomQuery);
     });
 }
