@@ -48,9 +48,8 @@ var MovieInfo = function (movie) {
 }
 
 var SpotifyInfo = function (song) {
-    if (process.argv.length == 3)
-        this.song = "The sign";
-    else this.song = song;
+    this.song = song;
+    console.log('query inside spotinfo', query)
     this.get = function () {
         spotify
             .search({ type: 'track', query: this.song })
@@ -89,6 +88,9 @@ function executeCommand(command, query) {
             break;
 
         case "spotify-this-song":
+        console.log("inside switch cmd que", command, query)
+        if (!query)
+        query = "ace of base the sign";
             var tune = new SpotifyInfo(query);
             tune.get();
             break;
