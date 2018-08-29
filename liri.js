@@ -55,8 +55,7 @@ var SpotifyInfo = function (song) {
         spotify
             .search({ type: 'track', query: this.song })
             .then(response => {
-                console.log(response.tracks.items[0]);
-                // console.log(response.tracks.items[0]);
+                displaySongInfo(response);
             })
             .catch(err => {
                 console.log("Sorry, there was an error: " + err);
@@ -70,13 +69,14 @@ function whatItSays() {
             console.log("Sorry, there was an error: " + error);
         var commandArr = data.split(",");
         randomCommand = commandArr[0];
-        query = commandArr[1];
-        executeCommand(randomCommand);
+        randomQuery = commandArr[1];
+        console.log(randomCommand, randomQuery)
+        executeCommand(randomCommand, randomQuery);
     });
 }
 
 
-function executeCommand(command) {
+function executeCommand(command, query) {
     switch (command) {
         case "concert-this":
             var bands = new BandsInTown(query);
@@ -91,25 +91,24 @@ function executeCommand(command) {
         case "spotify-this-song":
             var tune = new SpotifyInfo(query);
             tune.get();
+            break;
 
         case "do-what-it-says":
             whatItSays();
+            break;
     }
 }
 
 function displayConcertInfo(response) {
     if (response.length == 0)
         console.log("Hmmm, it doesn't look like there are any upcoming shows at the moment. Try another artist?")
-    Else
-    console.log("Okay, I found the following information on upcoming shows:");
+    else
+        console.log("Okay, I found the following information on upcoming shows:");
     response.forEach(concert => {
         var venueName = concert.venue.name;
         var venueCity = concert.venue.city;
         var venueCountry = concert.venue.country;
         var venueRegion = concert.venue.region;
-        var indexOfTime = concert.datetime.indexOf('T');
-        var timeUnformatted = concert.datetime.slice(indexOfTime + 1);
-        var dateUnformatted = concert.datetime.slice(0, indexOfTime);
         var dateAndTime = moment(concert.datetime).format('MM/DD/YYYY [at] hh:mma');
         if (venueRegion !== "")
             console.log("On " + dateAndTime + " at " + venueName + " in " + venueCity + ", " + venueRegion + ", " + venueCountry);
@@ -118,7 +117,6 @@ function displayConcertInfo(response) {
         console.log();
         console.log("=========OR=========");
 
-        // console.log(concert.venue);
     });
 
 }
@@ -127,17 +125,17 @@ function displayMovieInfo(movie) {
     var title = movie.Title;
     var year = movie.Year;
     var ratingsArr = movie.Ratings;
-    var getImdbRating = function(ratingsArr) {
+    var getImdbRating = function (ratingsArr) {
         for (var i = 0; i < ratingsArr.length; i++) {
             if (ratingsArr[i].Source == 'Internet Movie Database')
-            return ratingsArr[i].Value;
+                return ratingsArr[i].Value;
         }
     };
 
-    var getRtRating = function(ratingsArr) {
+    var getRtRating = function (ratingsArr) {
         for (var i = 0; i < ratingsArr.length; i++) {
             if (ratingsArr[i].Source == 'Rotten Tomatoes')
-            return ratingsArr[i].Value;
+                return ratingsArr[i].Value;
         }
     };
     var imdbRating = getImdbRating(ratingsArr);
@@ -161,9 +159,20 @@ function displayMovieInfo(movie) {
         console.log("It received " + imdbRating + " from IMDb.");
     if (rtRating)
         console.log("It received " + rtRating + " from Rotten Tomatoes.");
-
 }
 
+function displaySongInfo (song) {
+    
+    var artist = song.tracks.items[0].album.artists[0].name;
+    var songName = song.tracks.items[0].name;
+    var previewURL = song.tracks.items[0].preview_url;
+    var albumName = song.tracks.items[0].album.name;
+    var releaseYear = song.tracks.items[0].album.release_date.slice(0, 4);
+    console.log("Okay, I found the following information about that song: ");
+    console.log(songName + " is a song released in " + releaseYear + " by " + artist + ".");
+    console.log("It is a track on the album " + albumName + ".");
+    if (previewURL)
+    console.log("For a preview of " + songName + ", visit: " + previewURL);
+}
 
-
-executeCommand(command);
+executeCommand(command, query);
