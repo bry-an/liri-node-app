@@ -115,7 +115,7 @@ function displayConcertInfo(response) {
         else
             console.log("On " + dateAndTime + " at " + venueName + " in " + venueCity + ", " + venueCountry);
         console.log();
-        console.log("=========OR=========");
+        console.log("====================\n");
 
     });
 
